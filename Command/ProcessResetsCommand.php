@@ -1,6 +1,6 @@
 <?php
 
-namespace MauticPlugin\ThirdSetResetBundle\Command;
+namespace MauticPlugin\ThirdSetMauticResetBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

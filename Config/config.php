@@ -14,8 +14,8 @@ return array(
     'author'      => 'Third Set Productions',
     'services'    => array(
         'other'   => array(
-            'plugin.thirdset.reset.reset_command' => array(
-                'class'     => 'MauticPlugin\ThirdSetResetBundle\Command\ResetCommand',
+            'plugin.thirdset.reset.process_resets_command' => array(
+                'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
                 'tag'       => 'console.command',
             )
         )
