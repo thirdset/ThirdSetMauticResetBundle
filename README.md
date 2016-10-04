@@ -1,1 +1,1 @@
-# mautic-reset-plugin
+# ThirdSetMauticResetBundle
