@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ProcessResetsCommand. This command does the following:
+ * The ProcessResetsCommand does the following:
  * * Finds all leads with a reset tag (see README.md for examples).
  * * Gets the campaign id out of the tag.
  * * Clears the campaign_lead_event_log history for the lead/campaign so that
