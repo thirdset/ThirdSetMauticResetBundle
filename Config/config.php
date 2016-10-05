@@ -14,18 +14,20 @@ return array(
     'author'      => 'Third Set Productions',
     'services'    => array(
         'other'   => array(
+            //MANAGERS
             'plugin.thirdset.reset.lead_manager' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager',
-                'arguments' => 'mautic.factory',
+                'arguments' => 'doctrine.orm.entity_manager'
             ),
             'plugin.thirdset.reset.tag_manager' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager',
-                'arguments' => 'mautic.factory',
+                'arguments' => 'doctrine.orm.entity_manager'
             ),
             'plugin.thirdset.reset.campaign_event_log_manager' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager',
-                'arguments' => 'mautic.factory',
+                'arguments' => 'doctrine.orm.entity_manager'
             ),
+            //COMMANDS
             'plugin.thirdset.reset.process_resets_command' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
                 'arguments' => [

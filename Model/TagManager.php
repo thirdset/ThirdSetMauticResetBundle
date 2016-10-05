@@ -2,7 +2,7 @@
 
 namespace MauticPlugin\ThirdSetMauticResetBundle\Model;
 
-use \Mautic\CoreBundle\Factory\MauticFactory;
+use Doctrine\ORM\EntityManager;
 
 /**
  * The TagManager class contains custom methods for managing Tags.
@@ -11,23 +11,19 @@ use \Mautic\CoreBundle\Factory\MauticFactory;
  * @since 1.0
  */
 class TagManager
-{
-    /* @var $factory \Mautic\CoreBundle\Factory\MauticFactory */
-    private $factory;
-    
+{  
     /* @var $em \Doctrine\ORM\EntityManager */
     private $em;
     
     /**
      * Constructor.
-     * @param \Mautic\CoreBundle\Factory\MauticFactory $factory
+     * @param Doctrine\ORM\EntityManager $em
      */
     public function __construct(
-                        MauticFactory $factory
+                        EntityManager $em
                     )
     {   
-        $this->factory = $factory;
-        $this->em = $factory->getEntityManager();
+        $this->em = $em;
     }
     
     /**
