@@ -16,6 +16,7 @@ return array(
         'other'   => array(
             'plugin.thirdset.reset.process_resets_command' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
+                'arguments' => 'mautic.factory',
                 'tag'       => 'console.command',
             )
         )
