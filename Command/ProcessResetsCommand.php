@@ -30,6 +30,15 @@ class ProcessResetsCommand extends ModeratedCommand
     /* @var $em \Doctrine\ORM\EntityManager */
     private $em;
     
+    /* @var $campaignModel \Mautic\CampaignBundle\Model\CampaignModel */
+    private $campaignModel;
+        
+    /* @var $leadModel \Mautic\LeadBundle\Model\LeadModel */
+    private $leadModel;
+
+    /* @var $leadRepo \Mautic\LeadBundle\Entity\LeadRepository */
+    private $leadRepo;
+    
     /* @var $leadManager \MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager */
     private $leadManager;
     
@@ -57,6 +66,9 @@ class ProcessResetsCommand extends ModeratedCommand
         
         $this->factory = $factory;
         $this->em = $factory->getEntityManager();
+        $this->campaignModel = $this->factory->getModel('campaign');
+        $this->leadModel = $this->factory->getModel('lead.lead');
+        $this->leadRepo = $this->leadModel->getRepository();
         
         $this->leadManager = $leadManager;
         $this->tagManager = $tagManager;
@@ -83,15 +95,6 @@ class ProcessResetsCommand extends ModeratedCommand
     {
         $output->writeln('Processing reset tags...');
         
-        /* @var $campaignModel \Mautic\CampaignBundle\Model\CampaignModel */
-        $campaignModel = $this->factory->getModel('campaign');
-        
-        /* @var $leadModel \Mautic\LeadBundle\Model\LeadModel */
-        $leadModel = $this->factory->getModel('lead.lead');
-        
-        /* @var $leadRepo \Mautic\LeadBundle\Entity\LeadRepository */
-        $leadRepo = $leadModel->getRepository();
-        
         //get all used reset tags
         $tags = $this->tagManager->searchTags('reset_%');
         
@@ -107,7 +110,7 @@ class ProcessResetsCommand extends ModeratedCommand
                 $output->writeln($tag->getId() . ': ' . $tag->getTag() . ':' . $campaignId);
             
                 /** @var \Mautic\CampaignBundle\Entity\Campaign $campaign */
-                $campaign = $campaignModel->getEntity($campaignId);
+                $campaign = $this->campaignModel->getEntity($campaignId);
                 
                 if($campaign == null) {
                     $output->writeln('ERROR: couldn\'t find campaign with id ' . $campaignId);
@@ -123,17 +126,17 @@ class ProcessResetsCommand extends ModeratedCommand
                     /* @var $lead \Mautic\LeadBundle\Entity\Lead */
                     foreach($leads AS $lead) {
                         //hydrate the lead
-                        $fields = $leadRepo->getFieldValues($lead->getId());
+                        $fields = $this->leadRepo->getFieldValues($lead->getId());
                         $lead->setFields($fields);
                         
                         //delete the event log for the campaign/lead
-                        $output->writeln('deleting the event log for campaign ' . $campaign->getId() . ' for lead ' . $lead->getId() . '(' . $lead->getEmail() . ')');
+                        $output->writeln('deleting the event log for campaign ' . $campaign->getId() . ' for lead ' . $lead->getId() . ' (' . $lead->getEmail() . ').');
                         $deletionCount = $this->eventLogManager->deleteCampaignEventLog($campaign, $lead);
                         $output->writeln($deletionCount . ' events deleted.');
                         
                         //remove the tag from the lead
                         $lead->removeTag($tag);
-                        $leadModel->saveEntity($lead);
+                        $this->leadModel->saveEntity($lead);
                     }//end for each lead
                 } //end if valid campaign
             } //end if valid tag
