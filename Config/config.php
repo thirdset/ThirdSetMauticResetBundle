@@ -22,12 +22,17 @@ return array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager',
                 'arguments' => 'mautic.factory',
             ),
+            'plugin.thirdset.reset.campaign_event_log_manager' => array(
+                'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager',
+                'arguments' => 'mautic.factory',
+            ),
             'plugin.thirdset.reset.process_resets_command' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
                 'arguments' => [
                         'mautic.factory', 
                         'plugin.thirdset.reset.lead_manager',
-                        'plugin.thirdset.reset.tag_manager'
+                        'plugin.thirdset.reset.tag_manager',
+                        'plugin.thirdset.reset.campaign_event_log_manager',
                     ],
                 'tag'       => 'console.command',
             ),

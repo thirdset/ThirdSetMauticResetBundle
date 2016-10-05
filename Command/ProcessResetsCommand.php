@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Mautic\CoreBundle\Factory\MauticFactory;
 use MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager;
 use MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager;
+use MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager;
 
 /**
  * The ProcessResetsCommand does the following:
@@ -29,18 +30,27 @@ class ProcessResetsCommand extends ModeratedCommand
     /* @var $em \Doctrine\ORM\EntityManager */
     private $em;
     
+    /* @var $leadManager \MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager */
     private $leadManager;
+    
+    /* @var $tagManager \MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager */
+    private $tagManager;
+    
+    /* @var $eventLogManager \MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager */
+    private $eventLogManager;
     
     /**
      * Constructor.
      * @param \Mautic\CoreBundle\Factory\MauticFactory $factory
      * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager $leadManager
      * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager $tagManager
+     * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager $eventLogManager
      */
     public function __construct(
                 MauticFactory $factory,
                 LeadManager $leadManager,
-                TagManager $tagManager
+                TagManager $tagManager,
+                CampaignEventLogManager $eventLogManager
             )
     {
         parent::__construct();
@@ -50,6 +60,7 @@ class ProcessResetsCommand extends ModeratedCommand
         
         $this->leadManager = $leadManager;
         $this->tagManager = $tagManager;
+        $this->eventLogManager = $eventLogManager;
     }
     
     /**
@@ -117,7 +128,7 @@ class ProcessResetsCommand extends ModeratedCommand
                         
                         //delete the event log for the campaign/lead
                         $output->writeln('deleting the event log for campaign ' . $campaign->getId() . ' for lead ' . $lead->getId() . '(' . $lead->getEmail() . ')');
-                        $deletionCount = $this->deleteCampaignEventLog($campaign, $lead);
+                        $deletionCount = $this->eventLogManager->deleteCampaignEventLog($campaign, $lead);
                         $output->writeln($deletionCount . ' events deleted.');
                         
                         //remove the tag from the lead
@@ -133,34 +144,5 @@ class ProcessResetsCommand extends ModeratedCommand
         
         $output->writeln('Done.');
     } //end function
-    
-    /**
-     * Deletes the Campaign Events for combination of Lead and Campaign.
-     *
-     * This is used so that we can rerun the Campaign for the Lead.
-     *
-     * @param \Mautic\CampaignBundle\Entity\Campaign $campaign The campaign 
-     * whose events we want to clear.
-     * @param \Mautic\LeadBundle\Entity\Lead $lead The lead whose events we want
-     * to clear.
-     * @return Returns the number of events that were deleted.
-     */
-    private function deleteCampaignEventLog(
-                        \Mautic\CampaignBundle\Entity\Campaign $campaign, 
-                        \Mautic\LeadBundle\Entity\Lead $lead
-                    )
-    {
-        /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
-        $qb = $this->em->getConnection()->createQueryBuilder();
-        
-        $deletionCount = $qb->delete(MAUTIC_TABLE_PREFIX . 'campaign_lead_event_log')
-            ->where('campaign_id = :campaignId')
-            ->andWhere('lead_id = :leadId')
-            ->setParameter('campaignId', $campaign->getId())
-            ->setParameter('leadId', $lead->getId())
-            ->execute();
-        
-        return $deletionCount;
-    }
     
 }
