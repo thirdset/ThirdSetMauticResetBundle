@@ -2,15 +2,17 @@
 
 namespace MauticPlugin\ThirdSetMauticResetBundle\Model;
 
+use \Mautic\CoreBundle\Factory\MauticFactory;
+
 /**
- * The LeadManager class contains custom methods for managing leads.
+ * The LeadManager class contains custom methods for managing Leads.
  * 
  * @package ThirdSetMauticResetBundle
  * @since 1.0
  */
 class LeadManager
 {
-    /* @var $em \Mautic\CoreBundle\Factory\MauticFactory */
+    /* @var $factory \Mautic\CoreBundle\Factory\MauticFactory */
     private $factory;
     
     /* @var $em \Doctrine\ORM\EntityManager */
@@ -18,8 +20,11 @@ class LeadManager
     
     /**
      * Constructor.
+     * @param \Mautic\CoreBundle\Factory\MauticFactory $factory
      */
-    public function __construct($factory)
+    public function __construct(
+                        MauticFactory $factory
+                    )
     {   
         $this->factory = $factory;
         $this->em = $factory->getEntityManager();
@@ -30,7 +35,7 @@ class LeadManager
      * @param \Mautic\LeadBundle\Entity\Tag $tag
      * @return array Returns an array of \Mautic\LeadBundle\Entity\Tags.
      */
-    private function getLeadsTaggedWith( \Mautic\LeadBundle\Entity\Tag $tag ) 
+    public function getLeadsTaggedWith( \Mautic\LeadBundle\Entity\Tag $tag ) 
     {   
         /* @var $query \Doctrine\ORM\Query */
         $query = $this->em->getRepository('MauticLeadBundle:Lead')

@@ -6,6 +6,10 @@ use Mautic\CoreBundle\Command\ModeratedCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Mautic\CoreBundle\Factory\MauticFactory;
+use MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager;
+use MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager;
+
 /**
  * The ProcessResetsCommand does the following:
  * * Finds all leads with a reset tag (see README.md for examples).
@@ -29,17 +33,23 @@ class ProcessResetsCommand extends ModeratedCommand
     
     /**
      * Constructor.
+     * @param \Mautic\CoreBundle\Factory\MauticFactory $factory
+     * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager $leadManager
+     * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager $tagManager
      */
     public function __construct(
-                        $factory,
-                        $leadManager
-                    )
+                MauticFactory $factory,
+                LeadManager $leadManager,
+                TagManager $tagManager
+            )
     {
         parent::__construct();
         
         $this->factory = $factory;
         $this->em = $factory->getEntityManager();
-        $this->leadManager = $leadManger;
+        
+        $this->leadManager = $leadManager;
+        $this->tagManager = $tagManager;
     }
     
     /**
@@ -72,7 +82,7 @@ class ProcessResetsCommand extends ModeratedCommand
         $leadRepo = $leadModel->getRepository();
         
         //get all used reset tags
-        $tags = $this->searchTags('reset_%');
+        $tags = $this->tagManager->searchTags('reset_%');
         
         //loop through each Tag
         /* @var $tag \Mautic\LeadBundle\Entity\Tag */
@@ -119,29 +129,10 @@ class ProcessResetsCommand extends ModeratedCommand
         } //end for each tag
         
         //delete any orphan tags
-        $this->deleteOrphanTags();
+        $this->tagManager->deleteOrphanTags();
         
         $output->writeln('Done.');
     } //end function
-    
-    /**
-     * Search the list of tags for the passed search string.
-     * @param type $search A string to search for (ex: 'reset_%').
-     * @return array Returns an array of \Mautic\LeadBundle\Entity\Tags.
-     */
-    private function searchTags( $search ) 
-    {   
-        /* @var $query \Doctrine\ORM\Query */
-        $query = $this->em->getRepository('MauticLeadBundle:Tag')
-                ->createQueryBuilder('t')
-                ->where('t.tag LIKE :search')
-                ->setParameter('search', $search)
-                ->getQuery();
-
-        $results = $query->getResult();
-
-        return $results;
-    }
     
     /**
      * Deletes the Campaign Events for combination of Lead and Campaign.
@@ -172,33 +163,4 @@ class ProcessResetsCommand extends ModeratedCommand
         return $deletionCount;
     }
     
-    /**
-     * Delete orphan tags that are not associated with any lead.
-     * This function was copied from the \Mautic\LeadBundle\Entity\TagRepository
-     * class.  We modified it slightly to better handle the no orphan tags
-     * scenario.
-     */
-    public function deleteOrphanTags()
-    {
-        $qb  = $this->em->getConnection()->createQueryBuilder();
-        $havingQb = $this->em->getConnection()->createQueryBuilder();
-
-        $havingQb->select('count(x.lead_id) as the_count')
-            ->from(MAUTIC_TABLE_PREFIX.'lead_tags_xref', 'x')
-            ->where('x.tag_id = t.id');
-
-        $qb->select('t.id')
-            ->from(MAUTIC_TABLE_PREFIX.'lead_tags', 't')
-            ->having(sprintf('(%s)', $havingQb->getSQL()) . ' = 0');
-        $delete = $qb->execute()->fetch();
-        
-        if( (! empty($delete)) && (count($delete)) ) {
-            $qb->resetQueryParts();
-            $qb->delete(MAUTIC_TABLE_PREFIX.'lead_tags')
-                ->where(
-                    $qb->expr()->in('id', $delete)
-                )
-                ->execute();
-        }
-    }
 }
