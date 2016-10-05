@@ -14,11 +14,18 @@ return array(
     'author'      => 'Third Set Productions',
     'services'    => array(
         'other'   => array(
+            'plugin.thirdset.reset.lead_manager' => array(
+                'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager',
+                'arguments' => 'mautic.factory',
+            ),
             'plugin.thirdset.reset.process_resets_command' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
-                'arguments' => 'mautic.factory',
+                'arguments' => [
+                        'mautic.factory', 
+                        'plugin.thirdset.reset.lead_manager'
+                    ],
                 'tag'       => 'console.command',
-            )
+            ),
         )
     ),
 );

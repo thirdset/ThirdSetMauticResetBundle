@@ -19,21 +19,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProcessResetsCommand extends ModeratedCommand
 {
     
+    /* @var $em \Mautic\CoreBundle\Factory\MauticFactory */
+    private $factory;
+    
     /* @var $em \Doctrine\ORM\EntityManager */
     private $em;
     
-    /* @var $em \Mautic\CoreBundle\Factory\MauticFactory */
-    private $factory;
+    private $leadManager;
     
     /**
      * Constructor.
      */
-    public function __construct($factory)
+    public function __construct(
+                        $factory,
+                        $leadManager
+                    )
     {
         parent::__construct();
         
         $this->factory = $factory;
         $this->em = $factory->getEntityManager();
+        $this->leadManager = $leadManger;
     }
     
     /**
@@ -88,7 +94,7 @@ class ProcessResetsCommand extends ModeratedCommand
                     $output->writeln($campaign->getId());
 
                     //get an array of all leads that are tagged with the tag.
-                    $leads = $this->getLeadsTaggedWith( $tag );
+                    $leads = $this->leadManager->getLeadsTaggedWith( $tag );
 
                     $output->writeln('found ' . sizeof($leads) . ' lead(s) tagged with "' . $tag->getTag() . '".');
 
@@ -130,26 +136,6 @@ class ProcessResetsCommand extends ModeratedCommand
                 ->createQueryBuilder('t')
                 ->where('t.tag LIKE :search')
                 ->setParameter('search', $search)
-                ->getQuery();
-
-        $results = $query->getResult();
-
-        return $results;
-    }
-    
-    /**
-     * Gets all leads that are tagged with the passed Tag.
-     * @param \Mautic\LeadBundle\Entity\Tag $tag
-     * @return array Returns an array of \Mautic\LeadBundle\Entity\Tags.
-     */
-    private function getLeadsTaggedWith( \Mautic\LeadBundle\Entity\Tag $tag ) 
-    {   
-        /* @var $query \Doctrine\ORM\Query */
-        $query = $this->em->getRepository('MauticLeadBundle:Lead')
-                ->createQueryBuilder('l')
-                ->leftJoin('l.tags', 't')
-                ->where('t.id = :tagId')
-                ->setParameter('tagId', $tag->getId())
                 ->getQuery();
 
         $results = $query->getResult();
