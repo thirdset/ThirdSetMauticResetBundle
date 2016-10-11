@@ -43,14 +43,16 @@ class CampaignEventLogManager
                     )
     {
         /** @var \Doctrine\DBAL\Query\QueryBuilder $qb */
-        $qb = $this->em->getConnection()->createQueryBuilder();
+        $qb = $this->em->getRepository('MauticCampaignBundle:LeadEventLog')
+                ->createQueryBuilder('log');
         
-        $deletionCount = $qb->delete(MAUTIC_TABLE_PREFIX . 'campaign_lead_event_log')
-            ->where('campaign_id = :campaignId')
-            ->andWhere('lead_id = :leadId')
-            ->setParameter('campaignId', $campaign->getId())
-            ->setParameter('leadId', $lead->getId())
-            ->execute();
+        $deletionCount = $qb->delete()
+            ->where('log.campaign = :campaign')
+            ->andWhere('log.lead = :lead')
+            ->setParameter('campaign', $campaign)
+            ->setParameter('lead', $lead)
+            ->getQuery()
+            ->getResult();
         
         return $deletionCount;
     }
