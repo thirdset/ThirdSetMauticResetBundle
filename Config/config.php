@@ -31,7 +31,8 @@ return array(
             'plugin.thirdset.reset.process_resets_command' => array(
                 'class'     => 'MauticPlugin\ThirdSetMauticResetBundle\Command\ProcessResetsCommand',
                 'arguments' => [
-                        'mautic.factory', 
+                        'mautic.campaign.model.campaign',
+                        'mautic.lead.model.lead',
                         'plugin.thirdset.reset.lead_manager',
                         'plugin.thirdset.reset.tag_manager',
                         'plugin.thirdset.reset.campaign_event_log_manager',

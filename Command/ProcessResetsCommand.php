@@ -6,7 +6,8 @@ use Mautic\CoreBundle\Command\ModeratedCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Mautic\CoreBundle\Factory\MauticFactory;
+use Mautic\CampaignBundle\Model\CampaignModel;
+use Mautic\LeadBundle\Model\LeadModel;
 use MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager;
 use MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager;
 use MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager;
@@ -22,14 +23,7 @@ use MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager;
  * @since 1.0
  */
 class ProcessResetsCommand extends ModeratedCommand
-{
-    
-    /* @var $em \Mautic\CoreBundle\Factory\MauticFactory */
-    private $factory;
-    
-    /* @var $em \Doctrine\ORM\EntityManager */
-    private $em;
-    
+{   
     /* @var $campaignModel \Mautic\CampaignBundle\Model\CampaignModel */
     private $campaignModel;
         
@@ -50,13 +44,15 @@ class ProcessResetsCommand extends ModeratedCommand
     
     /**
      * Constructor.
-     * @param \Mautic\CoreBundle\Factory\MauticFactory $factory
+     * @param \Mautic\CampaignBundle\Model\CampaignModel $campaignModel
+     * @param \Mautic\LeadBundle\Model\LeadModel $leadModel
      * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\LeadManager $leadManager
      * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\TagManager $tagManager
      * @param \MauticPlugin\ThirdSetMauticResetBundle\Model\CampaignEventLogManager $eventLogManager
      */
     public function __construct(
-                MauticFactory $factory,
+                CampaignModel $campaignModel,
+                leadModel $leadModel,
                 LeadManager $leadManager,
                 TagManager $tagManager,
                 CampaignEventLogManager $eventLogManager
@@ -64,10 +60,9 @@ class ProcessResetsCommand extends ModeratedCommand
     {
         parent::__construct();
         
-        $this->factory = $factory;
-        $this->em = $factory->getEntityManager();
-        $this->campaignModel = $this->factory->getModel('campaign');
-        $this->leadModel = $this->factory->getModel('lead.lead');
+        
+        $this->campaignModel = $campaignModel;
+        $this->leadModel = $leadModel;
         $this->leadRepo = $this->leadModel->getRepository();
         
         $this->leadManager = $leadManager;
