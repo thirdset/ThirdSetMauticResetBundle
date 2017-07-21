@@ -4,6 +4,7 @@ namespace MauticPlugin\ThirdSetMauticResetBundle\Command;
 
 use Mautic\CoreBundle\Command\ModeratedCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Mautic\CampaignBundle\Model\CampaignModel;
@@ -78,6 +79,7 @@ class ProcessResetsCommand extends ModeratedCommand
         $this
             ->setName('mautic:campaigns:process_resets')
             ->setDescription('Process any leads tagged with a reset tag (clears their campaign specific history and then removes the tag).')
+            ->addOption('--campaign-id', '-i', InputOption::VALUE_OPTIONAL, 'Specific campaign ID to reset. Defaults to all.', null)
         ;
     }
 
@@ -89,7 +91,9 @@ class ProcessResetsCommand extends ModeratedCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Processing reset tags...');
-        
+
+        $specific_campaign_id = $input->getOption('campaign-id');
+
         //get all used reset tags
         $tags = $this->tagManager->searchTags('reset_%');
         
@@ -102,6 +106,13 @@ class ProcessResetsCommand extends ModeratedCommand
                 
                 //pull the campaign id out of the tag
                 $campaignId = intval($matches[1]);
+
+                //if a specific campaign was set but is not the current campaign, go ahead and do nothing now
+                if (!(empty($specific_campaign_id) || is_null($specific_campaign_id)) && $campaignId != $specific_campaign_id) {
+                    $output->writeln('Campaign '.$campaignId. ' is not the specified campaign(' . $specific_campaign_id . '). Skipping...');
+                    continue;
+                }
+
                 $output->writeln($tag->getId() . ': ' . $tag->getTag() . ':' . $campaignId);
             
                 /** @var \Mautic\CampaignBundle\Entity\Campaign $campaign */
