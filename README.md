@@ -3,6 +3,9 @@
 ## [Description](id:description)
 The ThirdSetMauticResetBundle allows you to process a Mautic Contact through a Campaign multiple times.  See the [Usage](#usage) section below for how to use it.
 
+## Compatibility
+This plugin has been tested with up to v2.9.2 of Mautic.
+
 ## [Installation](id:installation)
 1. Download or clone this bundle into your Mautic /plugins folder.
 2. Manually delete your cache (app/cache/prod).
@@ -56,7 +59,7 @@ mautic:campaigns:process_resets --campaign-id 12
 
 ## Why Use This Plugin
 
-This plugin works around a limitation with the current  version of Mautic (v2.1.1) that keeps you from being able to process a Contact through a Campaign more than once.
+This plugin works around a limitation with the current  version of Mautic (v2.9.2) that keeps you from being able to process a Contact through a Campaign more than once.
 
 This type of processing is often needed for campaigns related to orders, billing, etc.
 
