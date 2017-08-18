@@ -1,3 +1,8 @@
+= 1.1.0 =
+
+* Added a functionality to reset a specific campaign (@mjlogan).
+* Added a Compatibility section to the README.md file (currently indicating that plugin has been tested with up to v2.9.2 of Mautic).
+
 = 1.0.1 =
 
 * Removed the factory dependency fro mthe ProcessResetsCommand.

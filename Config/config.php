@@ -10,7 +10,7 @@
 return array(
     'name'        => 'Reset',
     'description' => 'Allows for recurring campaigns by using "reset" tags and a reset command.',
-    'version'     => '1.0.1',
+    'version'     => '1.1.0',
     'author'      => 'Third Set Productions',
     'services'    => array(
         'other'   => array(
