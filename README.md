@@ -41,7 +41,19 @@ The process_resets command does the following:
 * Finds all leads with a reset tag (see above for examples).
   * Gets the campaign id out of the tag
   * Clears the campaign_lead_event_log history for the lead/campaign so that the lead can go through the campaign again.
-  
+
+## More Features
+
+### Process Resets for a Specific Campaign
+
+You can also run the `process_resets` command for a specific campaign (by
+default, the command will process resets for all campaigns). Just specify the
+`--campaign-id` like so:
+
+```
+mautic:campaigns:process_resets --campaign-id 12
+```
+
 ## Why Use This Plugin
 
 This plugin works around a limitation with the current  version of Mautic (v2.1.1) that keeps you from being able to process a Contact through a Campaign more than once.
