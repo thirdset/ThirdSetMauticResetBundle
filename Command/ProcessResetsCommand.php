@@ -148,9 +148,6 @@ class ProcessResetsCommand extends ModeratedCommand
             } //end if valid tag
         } //end for each tag
         
-        //delete any orphan tags
-        $this->tagManager->deleteOrphanTags();
-        
         $output->writeln('Done.');
     } //end function
     
