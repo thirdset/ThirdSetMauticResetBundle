@@ -4,7 +4,7 @@
 The ThirdSetMauticResetBundle allows you to process a Mautic Contact through a Campaign multiple times.  See the [Usage](#usage) section below for how to use it.
 
 ## Compatibility
-This plugin has been tested with up to v2.11.0 of Mautic.
+This plugin has been tested with up to v2.12.0 of Mautic.
 
 ## [Installation](id:installation)
 1. Download or clone this bundle into your Mautic /plugins folder.
