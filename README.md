@@ -1,5 +1,20 @@
 # ThirdSetMauticResetBundle
 
+## DEPRICATION NOTICE
+
+The ability for contacts to go through a campaign multiple times was added to
+Mautic in [v2.14](https://github.com/mautic/mautic/releases/tag/2.14.0) (see
+ #6132 in the [v2.14 release notes](https://github.com/mautic/mautic/releases/tag/2.14.0)).
+Mautic 2.14 was released on 2018-07-25. If you are using Mautic 2.14 or greater,
+you are advised to use Mautic's built in functionality instead of this plugin.
+
+If you are using a version of Mautic older than 2.14, this plugin may still be
+of value but all users are encouraged to upgrade.
+
+Once you have upgraded to Mautic 2.14, this plugin can safely be deleted.
+
+--------------------------------------------------------------------------------
+
 ## [Description](id:description)
 The ThirdSetMauticResetBundle allows you to process a Mautic Contact through a Campaign multiple times.  See the [Usage](#usage) section below for how to use it.
 
@@ -59,10 +74,12 @@ mautic:campaigns:process_resets --campaign-id 12
 
 ## Why Use This Plugin
 
-This plugin works around a limitation with the current  version of Mautic (v2.9.2) that keeps you from being able to process a Contact through a Campaign more than once.
+This plugin works around a limitation with older versions of Mautic (< 2.14) 
+that keeps you from being able to process a Contact through a Campaign more than
+once.
 
-This type of processing is often needed for campaigns related to orders, billing, etc.
+This type of processing is often needed for campaigns related to orders, 
+billing, etc.
 
-Future versions of Mautic will likely offer some version of recurring campaigns built in. Once that happens, this plugin will likely be obsolete and can safely be deleted in favor of the built in functionality.
-
-Right now there is at least one feature request for  [Recurring Campaigns / Repeating Tasks](https://github.com/mautic/mautic/issues/1606) currently open on GitHub.
+With the release of [Mautic v2.14](https://github.com/mautic/mautic/releases/tag/2.14.0),
+this plugin is now obsolete.
